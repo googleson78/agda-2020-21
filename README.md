@@ -9,6 +9,8 @@ Nice exercises and approach (imo), with the huge bonus of having recorded [video
 
 Good for a gentle introduction, and some exercises. Also for lambda calculus related things in Agda.
 
+### [Installation instructions with spacemacs in Bulgarian](https://gist.github.com/googleson78/85ce1a8a5d1480c9eb44c5f112cd7ac7)
+
 ## `Agda` in a browser
 You can get a set up emacs agda environment in your browser at this website:
 https://agdapad.quasicoherent.io/
