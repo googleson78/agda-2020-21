@@ -15,6 +15,7 @@
 | Try to use given expr to fill hole ("give")        | SPC m SPC | C-c C-SPC |
 | Introduce arguments                                | SPC m c   | C-c C-c   |
 | Case split (asks for input or a names in the hole) | SPC m c   | C-c C-c   |
+| Introduce [copattern] (don't enter a name)         | SPC m c   | C-c C-c   |
 | Attempt to introduce "contructor"\* ("refine")     | SPC m r   | C-c C-r   |
 | Try to use function in hole, adding holes for args | SPC m r   | C-c C-r   |
 
@@ -22,6 +23,7 @@
 #### \* "contructor" here means a couple of things
   * literally a constructor for a type, whose types matches - if ambiguous, the refine won't succeed
   * a lambda with as many arguments as possible - this is actually technically a constructor, for the function type (`->`)
+  * a record with the required fields for the current type, with holes for the field values
   * **!VERY USEFUL! - if you have a function name in the hole, if the return type matches the goal, the function will be introduced with holes for its arguments**
 
 ## Resources
@@ -42,3 +44,5 @@ You can get a set up emacs agda environment in your browser at this website:
 https://agdapad.quasicoherent.io/
 
 Additionally, if you send someone the link to the same session, you can work together.
+
+[copattern]: https://agda.readthedocs.io/en/v2.6.1.3/language/copatterns.html
