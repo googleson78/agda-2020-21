@@ -14,7 +14,7 @@
 | Ask for goal, context, and expression in hole      | SPC m .   | C-c C-.   |
 | Try to use given expr to fill hole ("give")        | SPC m SPC | C-c C-SPC |
 | Introduce arguments                                | SPC m c   | C-c C-c   |
-| Case split (asks for input or a names in the hole) | SPC m c   | C-c C-c   |
+| Case split (asks for input or names in the hole)   | SPC m c   | C-c C-c   |
 | Introduce [copattern] (don't enter a name)         | SPC m c   | C-c C-c   |
 | Attempt to introduce "contructor"\* ("refine")     | SPC m r   | C-c C-r   |
 | Try to use function in hole, adding holes for args | SPC m r   | C-c C-r   |
