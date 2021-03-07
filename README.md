@@ -13,7 +13,7 @@
 | Ask for goal, and context                          | SPC m ,   | C-c C-,   |
 | Ask for goal, context, and expression in hole      | SPC m .   | C-c C-.   |
 | Try to use given expr to fill hole ("give")        | SPC m SPC | C-c C-SPC |
-| Introduce arguments                                | SPC m c   | C-c C-a   |
+| Introduce arguments                                | SPC m c   | C-c C-c   |
 | Case split (asks for input or on expr in hole)     | SPC m c   | C-c C-c   |
 | Attempt to introduce "contructor"\* ("refine")     | SPC m r   | C-c C-r   |
 | Try to use function in hole, adding holes for args | SPC m r   | C-c C-r   |
