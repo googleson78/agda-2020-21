@@ -1,3 +1,29 @@
+## Binds cheatsheet
+### Top level
+| action               | spacemacs   | vscode  |
+|----------------------|-------------|---------|
+| Reload and typecheck | SPC m l     | C-c C-l |
+| Restart Agda         | SPC m x r   | C-c C-r |
+| Compute expression   | SPC m n     | C-c C-n |
+
+### In hole
+| action                                             | spacemacs | vscode    |
+|----------------------------------------------------|-----------|-----------|
+| Auto (`agsy`)                                      | SPC m a   | C-c C-a   |
+| Ask for goal, and context                          | SPC m ,   | C-c C-,   |
+| Ask for goal, context, and expression in hole      | SPC m .   | C-c C-.   |
+| Try to use given expr to fill hole ("give")        | SPC m SPC | C-c C-SPC |
+| Introduce arguments                                | SPC m c   | C-c C-a   |
+| Case split (asks for input or on expr in hole)     | SPC m c   | C-c C-c   |
+| Attempt to introduce "contructor"\* ("refine")     | SPC m r   | C-c C-r   |
+| Try to use function in hole, adding holes for args | SPC m r   | C-c C-r   |
+
+
+#### \* "contructor" here means a couple of things
+  * literally a constructor for a type, whose types matches - if ambiguous, the refine won't succeed
+  * a lambda with as many arguments as possible - this is actually technically a constructor, for the function type (`->`)
+  * **!VERY USEFUL! - if you have a function name in the hole, if the return type matches the goal, the function will be introduced with holes for its arguments**
+
 ## Resources
 Some git repos for agda courses:
 * https://github.com/pigworker/CS410-17
