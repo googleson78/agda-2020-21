@@ -9,7 +9,7 @@
 ### In hole
 | action                                             | spacemacs | vscode    |
 |----------------------------------------------------|-----------|-----------|
-| Auto (`agsy`)                                      | SPC m a   | C-c C-a   |
+| [Auto] (`agsy`)                                    | SPC m a   | C-c C-a   |
 | Ask for goal, and context                          | SPC m ,   | C-c C-,   |
 | Ask for goal, context, and expression in hole      | SPC m .   | C-c C-.   |
 | Try to use given expr to fill hole ("give")        | SPC m SPC | C-c C-SPC |
@@ -46,3 +46,4 @@ https://agdapad.quasicoherent.io/
 Additionally, if you send someone the link to the same session, you can work together.
 
 [copattern]: https://agda.readthedocs.io/en/v2.6.1.3/language/copatterns.html
+[Auto]: https://agda.readthedocs.io/en/v2.6.1.3/tools/auto.html
