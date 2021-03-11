@@ -30,6 +30,11 @@
 ## Resources
 
 ### [Recordings of lectures (in Bulgarian)](https://www.youtube.com/playlist?list=PLShxdZq0K256pGsUNHtvDux3Qbzu2ZWXI)
+
+### [Installation instructions with spacemacs in Bulgarian](https://gist.github.com/googleson78/85ce1a8a5d1480c9eb44c5f112cd7ac7)
+The instructions for vscode should be almost the same, except you install [agda-mode](https://marketplace.visualstudio.com/items?itemName=banacorn.agda-mode) instead
+
+### Other materials
 Some git repos for agda courses:
 * https://github.com/pigworker/CS410-17
 * https://github.com/pigworker/CS410-18
@@ -39,8 +44,6 @@ Nice exercises and approach (imo), with the huge bonus of having recorded [video
 [PLFA](https://plfa.github.io/) - A loose adaptation of the [popular Coq based book](https://softwarefoundations.cis.upenn.edu/) to Agda.
 
 Good for a gentle introduction, and some exercises. Also for lambda calculus related things in Agda.
-
-### [Installation instructions with spacemacs in Bulgarian](https://gist.github.com/googleson78/85ce1a8a5d1480c9eb44c5f112cd7ac7)
 
 ## `Agda` in a browser
 You can get a set up emacs agda environment in your browser at this website:
