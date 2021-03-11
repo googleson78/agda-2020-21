@@ -26,7 +26,10 @@
   * a record with the required fields for the current type, with holes for the field values
   * **!VERY USEFUL! - if you have a function name in the hole, if the return type matches the goal, the function will be introduced with holes for its arguments**
 
+
 ## Resources
+
+### [Recordings of lectures (in Bulgarian)](https://www.youtube.com/playlist?list=PLShxdZq0K256pGsUNHtvDux3Qbzu2ZWXI)
 Some git repos for agda courses:
 * https://github.com/pigworker/CS410-17
 * https://github.com/pigworker/CS410-18
