@@ -57,6 +57,8 @@ infixr 15 _+N_
 data _==_ {A : Set} : A -> A -> Set where
   refl : (x : A) -> x == x
 
+{-# BUILTIN EQUALITY _==_ #-}
+
 infix 10 _==_
 
 _ : zero == zero
@@ -77,7 +79,6 @@ ap f (refl x) = refl (f x)
 
 -- TODO: mention cheatsheet
 
--- TODO: mention extra set theoretic explanation of pi and sigma?
 
 -- TODO: mention different meanings of _
 -- mixfix
@@ -85,54 +86,115 @@ ap f (refl x) = refl (f x)
 -- ignored arg
 -- TODO: mention project binomial heaps
 
+-- TODO: mention extra set theoretic explanation of pi and sigma?
+
 -- TODO: show "stuckness reasoning" again
 +N-assoc : (n m k : Nat) -> (n +N m) +N k == n +N (m +N k)
-+N-assoc n m k = {!!}
++N-assoc zero m k = refl (m +N k)
++N-assoc (suc n) m k rewrite +N-assoc n m k = refl _
+
+-- rewrite
+-- p : x == y
+
+-- доказвам P, в което има x
+-- x == y
+-- доказвам P, в което има y
+
+-- Have:      (n +N m) +N k  ==      n +N m +N k
+
+-- Goal: suc ((n +N m) +N k) == suc (n +N m +N k)
+-- <SPC> m .
+-- C-c C-.
 
 Even : Nat -> Set
-Even = {!!}
+Even zero = One
+Even (suc zero) = Zero -- 1
+Even (suc (suc n)) = Even n -- 2 + n
+
+_ : Even 10
+_ = <>
+
+3isNotEven : Even 3 -> Zero
+3isNotEven ()
 
 Odd : Nat -> Set
-Odd = {!!}
+Odd zero = Zero
+Odd (suc zero) = One
+Odd (suc (suc n)) = Odd n -- 2 + n
 
 data Even' : Nat -> Set where
+  ezero : Even' zero
+  esuc : {n : Nat} -> Even' n -> Even' (suc (suc n))
+
+_ : Even' 10
+_ = esuc (esuc (esuc (esuc (esuc ezero))))
+
+f : (n : Nat) -> Even n -> One
+f n x = <>
+
+f' : (n : Nat) -> Even' n -> One
+f' n x = <>
+
+_ : f 50 <> == <>
+_ = refl _
+
+_ : f' 10 (esuc (esuc (esuc (esuc (esuc ezero))))) == <>
+_ = refl _
 
 data Odd' : Nat -> Set where
+  oone : Odd' (suc zero)
+  osuc : {n : Nat} -> Odd' n -> Odd' (suc (suc n))
 
+-- n == zero
+-- suc n == suc zero
+-- Odd (suc zero) == One
+-- n == suc (suc n')
+-- Even n == Even (suc (suc n')) ==  Even n'
 sucEvenIsOdd : (n : Nat) -> Even n -> Odd (suc n)
-sucEvenIsOdd = {!!}
+sucEvenIsOdd zero p = <>
+sucEvenIsOdd (suc zero) ()
+sucEvenIsOdd (suc (suc n')) p' = sucEvenIsOdd n' p'
 
-sucEven'IsOdd' : (n : Nat) -> Even' n -> Odd' (suc n)
-sucEven'IsOdd' = {!!}
+-- p == ezero
+-- p : Even n
+-- n == zero
 
-double : Nat -> Nat
-double = {!!}
+-- p == osuc p'
+-- p : Even n
+-- osuc n' : Even (suc (suc n'))
+-- n == suc (suc n')
 
-doubleIsEven : (n : Nat) -> Even (double n)
-doubleIsEven = {!!}
+-- p : Even' (suc zero)
+-- ezero : ... zero
+-- esuc : ... (suc (suc _))
+sucEven'IsOdd' : {n : Nat} -> Even' n -> Odd' (suc n)
+sucEven'IsOdd' ezero = oone
+sucEven'IsOdd' (esuc p) = osuc (sucEven'IsOdd' p)
+
+data _<=_ : Nat -> Nat -> Set where
+  ozero : {n : Nat} -> 0 <= n
+  osuc : {n m : Nat} -> n <= m -> suc n <= suc m
+
+infix 9 _<=_
+
+-- suc zero <= suc 2
+_ : 1 <= 3
+_ = osuc ozero
+
+-- n == suc n'
+-- m == zero
+-- k == suc k'
+-- osuc p : n <= m
+-- osuc p : suc n <= zero
+<=-trans : {n m k : Nat} -> n <= m -> m <= k -> n <= k
+<=-trans ozero q = ozero
+<=-trans (osuc p) (osuc q) = osuc (<=-trans p q)
 
 record _*_ (A : Set) (B : Set) : Set where
   constructor _,_
   field
     fst : A
     snd : B
-
--- sigma
---record _><_ ??? : Set where
---
---open _><_ public
--- infixr 8 _><_
-
--- _*_ : Set -> Set -> Set
--- A * B = {!!}
--- infixr 9 _*_
-
-data _<=_ : Nat -> Nat -> Set where
-
-infix 9 _<=_
-
-<=-trans : {n m k : Nat} -> n <= m -> m <= k -> n <= k
-<=-trans = {!!}
 
 {-
 -- STUDENTS TIME
@@ -217,11 +279,12 @@ replicate-all-==-orig : {A : Set} {x : A} (n : Nat) -> All (_== x) (replicate n 
 replicate-all-==-orig = {!!}
 -- this actually isn't necessary thanks to parametricity, but anyway
 
--- correct division by 2
--- you can't divide odd numbers
--- and you also always get back a number that is twice as small as your original one
-div2 : (n : Nat) -> Even n -> Nat >< \m -> double m == n
-div2 = {!!}
+double : Nat -> Nat
+double = {!!}
+
+doubleIsEven : (n : Nat) -> Even (double n)
+doubleIsEven = {!!}
+
 
 -- every natural number is either Even or Odd
 decEvenOrOdd : (n : Nat) -> Even n + Odd n
@@ -243,10 +306,6 @@ decEven'OrOdd' = {!!}
 -- you might need a lemma here
 <=-mono-right-+ : {n m : Nat} (k : Nat) -> n <= m -> n +N k <= m +N k
 <=-mono-right-+ = {!!}
-
--- use with!
-<=-total : (n m : Nat) -> n <= m + m <= n
-<=-total = {!!}
 
 -- multiplication using repeated addition
 _*N_ : Nat -> Nat -> Nat
@@ -305,4 +364,27 @@ infix 3 _QED
 *N-commut : (n m : Nat) -> n *N m == m *N n
 *N-commut = {!!}
 
+-}
+
+{-
+-- sigma
+--record _><_ ??? : Set where
+
+--open _><_ public
+-- infixr 8 _><_
+
+-- _*_ : Set -> Set -> Set
+-- A * B = {!!}
+-- infixr 9 _*_
+
+-- difference??
+-- correct division by 2
+-- you can't divide odd numbers
+-- and you also always get back a number that is twice as small as your original one
+div2 : (n : Nat) -> Even n -> Nat >< \m -> double m == n
+div2 = {!!}
+
+-- use with!
+<=-total : (n m : Nat) -> n <= m + m <= n
+<=-total = {!!}
 -}
