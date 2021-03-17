@@ -1,6 +1,6 @@
 {-# OPTIONS --no-unicode #-}
 
-module TwoStart where
+module TwoSolved where
 
 data Zero : Set where
 
