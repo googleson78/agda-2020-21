@@ -12,17 +12,66 @@ open import Lib.Sum
 
 -- !show rewrite
 
-{-
+-- maybe send link on actual rewrite
 +N-right-zero' : (n : Nat) -> n +N 0 == n
-+N-right-zero' = {!!}
++N-right-zero' zero = refl zero
++N-right-zero' (suc n) rewrite +N-right-zero' n = refl _
 
+-- rewrite allows us to replace "by an equality"
+
+-- +N-right-zero' n : n +N 0 == n
+-- suc (n +N 0) == suc n
+
+-- 3 + n
+-- n == m
+-- 3 + m
+
+
+-- James McKinna, Conor McBride
 -- !show with
 -- !don't forget to say what the three dots mean!!
 -- !demonstrate that when we match, goal changes
 -- !show lambda
 -- !?show where
 -- !?show "generate helper"
--- dec== : (n m : Nat) -> Bool
+-- decide
+
+-- refl
+-- suc n == suc m
+-- suc n == suc n
+-- n ~ m
+not-eq-suc : {n m : Nat} -> (n == m -> Zero) -> suc n == suc m -> Zero
+not-eq-suc notn==m (refl _) = notn==m (refl _)
+
+-- (\ x y z -> x + y + z) 1 2 3 == 6
+dec== : (n m : Nat) -> n == m + (n == m -> Zero)
+dec== zero zero = inl (refl zero)
+dec== zero (suc m) = inr \() -- refine, <SPC> m r
+dec== (suc n) zero = inr \()
+dec== (suc n) (suc m) with dec== n m
+dec== (suc n) (suc .n) | inl (refl .n) = inl (refl (suc n))
+dec== (suc n) (suc m) | inr notp = inr (not-eq-suc notp)
+-- <SPC> m h
+-- with abstraction
+-- unordered_map<T, bool>
+
+--  where
+--  helper :
+--    {n m : Nat} ->
+--    n == m + (n == m -> Zero) ->
+--    suc n == suc m + (suc n == suc m -> Zero)
+--  helper (inl p) = inl (ap suc p)
+--  helper (inr notp) = inr \ q -> not-eq-suc notp q
+
+_ : 3 == 2 + (3 == 2 -> Zero)
+_ = dec== 3 2
+
+bla : (n : Nat) -> n == 2 -> 2 +N n == 4
+bla .2 (refl .2) = refl 4
+
+-- case dec== n 2 of
+--   inl p -> bla n p
+--   inr notp -> putStrLn "invalid input"
 
 Even : Nat -> Set
 Even zero = One
@@ -34,35 +83,84 @@ Even (suc (suc n)) = Even n -- 2 + n
 -- !do these on another "live solving session" instead:
 -- show how this generalises _+_ ?
 -- and how (a : A) -> P a generalises _*_ ?
-record _><_ ?? : Set where
+record _><_ (A : Set) (P : A -> Set) : Set where
+  constructor _,_
+
+  field
+    fst : A
+    snd : P fst
+
+-- record Customer
+--   field
+--     age : Int
+--     alcohol : if age > 18 then List Drink else One
+
+-- data Sg (A : Set) (P : A -> Set) : Set where
+--   sg : (fst : A) -> P fst -> Sg A P
 
 open _><_ public
 
 infixr 8 _><_
 
+_ : Nat >< \n -> Nat >< \m -> n == m
+_ = zero , (zero , refl zero)
+
+-- (a : A) -> ...
+-- ∀(a ∈ A).  ...
+-- ∃(n ∈ Nat). Even n
+_ : Nat >< \n -> Even n
+_ = 2 , <>
+
 _*_ : Set -> Set -> Set
-A * B = ?
+A * B = A >< \ _ -> B
 infixr 9 _*_
 
-difference<= : (m n : Nat) -> n <= m -> Nat >< \d -> m == n +N d
-difference<= = ?
+_ : Nat * Nat
+_ = zero , zero
+
 
 data Vec (A : Set) : Nat -> Set where
+  [] : Vec A zero
+  _,-_ : {n : Nat} -> A -> Vec A n -> Vec A (suc n)
 
-vHead : {A : Set} {n : Nat} -> ?
-vHead = ?
 
-vTail : {A : Set} {n : Nat} -> ?
-vTail = ?
+-- lHead : {A : Set}-> List A -> A
+-- lHead [] = {!error "Prelude.head empty list !}
+-- lHead (x ,- _) = x
+
+vHead : {A : Set} {n : Nat} -> Vec A (suc n) -> A
+vHead (x ,- _) = x
+
+
+vTail : {A : Set} {n : Nat} -> Vec A (suc n) -> Vec A n
+vTail (_ ,- xs) = xs
 
 -- !?show parallel with +L - agda can now write it itself
-_+V_ : ?
-_+V_ = ?
+_+L'_ : {A : Set} -> List A -> List A -> List A
+[] +L' ys = ys
+(x ,- xs) +L' ys = x ,- (xs +L' ys)
+
+_+V_ : {A : Set} {n m : Nat} -> Vec A n -> Vec A m -> Vec A (n +N m)
+[] +V ys = ys
+(x ,- xs) +V ys = x ,- (xs +V ys)
+
 
 infixr 12 _+V_
 
-listToVec : {A : Set} -> List A -> Nat >< Vec A
-listToVec = ?
+-- readLn :: [Char]
+-- input <- readLn
+--
+-- case listToVec input of
+-- zero, [] -> putStLn "invalid input"
+-- suc n, v -> isLengthMoreThan10 v n
+--
+-- 10 <= n
+
+listToVec : {A : Set} -> List A -> Nat >< \ n -> Vec A n
+listToVec [] = zero , []
+listToVec (x ,- xs) =
+  let n , xs' = listToVec xs
+  in suc n , (x ,- xs')
 
 _=[]_ : {A : Set} {y : A} -> (x : A) -> x == y -> x == y
 x =[] (refl _) = refl _
@@ -84,14 +182,28 @@ x QED = refl x
 
 infix 3 _QED
 
+-- n == // защото n е пешо и гошо
+-- m == // защото лагранж
+-- z QED
+
 -- ! show =[] for zero case?
 -- ! show eq reasoning with commut
 -- ! maybe write out eq reasoning?
 
 +N-commut' : (n m : Nat) -> n +N m == m +N n
-+N-commut' = {!!}
++N-commut' zero m =
+  m
+    =[ ==-symm (+N-right-zero m) >=
+  m +N zero
+    QED
++N-commut' (suc n) m =
+  suc (n +N m)
+    =[ ap suc (+N-commut' n m) >=
+  suc (m +N n)
+    =[ ==-symm (+N-right-suc m n) >=
+  m +N suc n
+    QED
 
--}
 
 {-
 
@@ -145,6 +257,11 @@ vTake = ?
 -- you need to have implemented <=-refl before this
 vTake-id : {A : Set} (n : Nat) (v : Vec A n) -> vTake (<=-refl n) v == v
 vTake-id = ?
+
+-- m - n
+-- d for difference
+difference<= : (m n : Nat) -> n <= m -> Nat >< \d -> m == n +N d
+difference<= = {!!}
 
 -- naively reverse a list, by appending at the end
 reverse : {A : Set} -> List A -> List A
