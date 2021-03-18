@@ -34,10 +34,10 @@ infix 9 _<=_
 <=-trans ozero q = ozero
 <=-trans (osuc p) (osuc q) = osuc (<=-trans p q)
 
-+N-right-suc : (n m : Nat) -> suc (n +N m) == n +N suc m
++N-right-suc : (n m : Nat) -> n +N suc m == suc (n +N m)
 +N-right-suc zero m = refl (suc m)
 +N-right-suc (suc n) m = ap suc (+N-right-suc n m)
 
 +N-commut : (n m : Nat) -> n +N m == m +N n
 +N-commut zero m = ==-symm (+N-right-zero m)
-+N-commut (suc n) m rewrite (+N-commut n m) = +N-right-suc m n
++N-commut (suc n) m rewrite (+N-commut n m) = ==-symm (+N-right-suc m n)
