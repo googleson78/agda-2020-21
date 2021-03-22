@@ -14,8 +14,8 @@ open import Lib.Sum
 
 -- maybe send link on actual rewrite
 +N-right-zero' : (n : Nat) -> n +N 0 == n
-+N-right-zero' zero = refl zero
-+N-right-zero' (suc n) rewrite +N-right-zero' n = refl _
++N-right-zero' zero = refl
++N-right-zero' (suc n) rewrite +N-right-zero' n = refl
 
 -- rewrite allows us to replace "by an equality"
 
@@ -41,15 +41,15 @@ open import Lib.Sum
 -- suc n == suc n
 -- n ~ m
 not-eq-suc : {n m : Nat} -> (n == m -> Zero) -> suc n == suc m -> Zero
-not-eq-suc notn==m (refl _) = notn==m (refl _)
+not-eq-suc notn==m refl = notn==m refl
 
 -- (\ x y z -> x + y + z) 1 2 3 == 6
 dec== : (n m : Nat) -> n == m + (n == m -> Zero)
-dec== zero zero = inl (refl zero)
+dec== zero zero = inl refl
 dec== zero (suc m) = inr \() -- refine, <SPC> m r
 dec== (suc n) zero = inr \()
 dec== (suc n) (suc m) with dec== n m
-dec== (suc n) (suc .n) | inl (refl .n) = inl (refl (suc n))
+dec== (suc n) (suc .n) | inl refl = inl refl
 dec== (suc n) (suc m) | inr notp = inr (not-eq-suc notp)
 -- <SPC> m h
 -- with abstraction
@@ -67,7 +67,7 @@ _ : 3 == 2 + (3 == 2 -> Zero)
 _ = dec== 3 2
 
 bla : (n : Nat) -> n == 2 -> 2 +N n == 4
-bla .2 (refl .2) = refl 4
+bla .2 refl = refl
 
 -- case dec== n 2 of
 --   inl p -> bla n p
@@ -103,7 +103,7 @@ open _><_ public
 infixr 8 _><_
 
 _ : Nat >< \n -> Nat >< \m -> n == m
-_ = zero , (zero , refl zero)
+_ = zero , (zero , refl)
 
 -- (a : A) -> ...
 -- ∀(a ∈ A).  ...
@@ -163,22 +163,22 @@ listToVec (x ,- xs) =
   in suc n , (x ,- xs')
 
 _=[]_ : {A : Set} {y : A} -> (x : A) -> x == y -> x == y
-x =[] (refl _) = refl _
+x =[] refl = refl
 
 infixr 1 _=[]_
 
 _=[_>=_ : {A : Set} {y z : A} -> (x : A) -> x == y -> y == z -> x == z
-x =[ refl _ >= (refl _) = refl _
+x =[ refl >= refl = refl
 
 infixr 1 _=[_>=_
 
 _=<_]=_ : {A : Set} {y z : A} -> (x : A) -> y == z -> x == y -> x == z
-x =< refl _ ]= (refl _) = refl _
+x =< refl ]= refl = refl
 
 infixr 1 _=<_]=_
 
 _QED : {A : Set} -> (x : A) -> x == x
-x QED = refl x
+x QED = refl
 
 infix 3 _QED
 
