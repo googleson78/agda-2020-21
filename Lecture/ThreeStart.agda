@@ -345,4 +345,82 @@ map-foldr = {!!}
 -- but don't make students solve this
 -- listToVec-vecToList-id : {A : Set} {n : Nat} -> (v : Vec A n) -> listToVec (vecToList v) == n , v
 -- listToVec-vecToList-id = ?
+
+add-two-Even : (n m : Nat) -> Even m -> Even (n +N n +N m)
+add-two-Even = {!!}
+
+*N-consecutive-Even : (n : Nat) -> Even (n *N suc n)
+*N-consecutive-Even = {!!}
+
+downFrom : Nat -> Nat
+downFrom zero = zero
+downFrom (suc n) = suc n +N downFrom n
+
+div2 : (n : Nat) -> Even n -> Nat
+div2 = {!!}
+
+downFrom-closed-form : (n : Nat) -> 2 *N downFrom n == n *N suc n
+downFrom-closed-form = {!!}
+
+-- "abuse" modules so we can have the same name datatype twice
+module listsplit where
+  -- a "splitting" - a description of how a list was split into two others
+  -- alternatively, a description/plan of how to merge two lists to make a third
+  data _<[_]>_ {A : Set} : List A -> List A -> List A -> Set where
+    -- we can always split the empty list into two other empty lists
+    []split : [] <[ [] ]> []
+
+    -- if we can split zs into xs and ys
+    -- then we can also simultaneously add an element on the left (to xs) and to zs
+    left : {xs ys zs : List A} {x : A} ->
+           xs <[      zs ]>      ys ->
+      x ,- xs <[ x ,- zs ]>      ys
+
+    -- same as above, but with the right list
+    right : {xs ys zs : List A} {x : A} ->
+           xs <[      zs ]>      ys ->
+           xs <[ x ,- zs ]> x ,- ys
+
+  infix 10 _<[_]>_
+
+  -- for a predicate to be decidable, it must be decidable for every value
+  Dec : {A : Set} -> (A -> Set) -> Set
+  Dec {A} P = (x : A) -> (P x -> Zero) + P x
+
+  -- given a decidable predicate and a list, produce two lists
+  -- one with all the elements for which the predicate holds
+  -- and one with all the elements for which it doesn't
+  partition :
+    {A : Set} {P : A -> Set} -> (Dec P) -> (xs : List A) ->
+      List A >< \nays ->
+      List A >< \yeas ->
+        nays <[ xs ]> yeas *
+        All (\x -> P x -> Zero) nays *
+        All P yeas
+  partition p? xs = {!!}
+
+module natsplit where
+  -- same idea as with lists
+  data _<[_]>_ : Nat -> Nat -> Nat -> Set where
+    zero : zero <[ zero ]> zero
+
+    left : {l r m : Nat} ->
+          l <[     m ]>      r ->
+      suc l <[ suc m ]>      r
+
+    right : {l r m : Nat} ->
+           l <[     m ]>     r ->
+           l <[ suc m ]> suc r
+
+  infix 10 _<[_]>_
+
+  -- use the splitting to guide you on how to merge the two vectors
+  _>[_]<_ : {A : Set} {l m r : Nat} -> Vec A l -> l <[ m ]> r -> Vec A r -> Vec A m
+  xs >[ spl ]< ys = {!!}
+
+  split : {A : Set} (l m r : Nat) (spl : l <[ m ]> r) (xs : Vec A m) ->
+    Vec A l >< \lefts ->
+    Vec A r >< \rights ->
+      (lefts >[ spl ]< rights) == xs
+  split l m r spl xs = {!!}
 -}
