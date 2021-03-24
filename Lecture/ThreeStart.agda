@@ -9,6 +9,7 @@ open import Lib.One
 open import Lib.Zero
 open import Lib.Two
 open import Lib.Sum
+open import Lib.Sigma
 
 -- !show rewrite
 
@@ -83,12 +84,12 @@ Even (suc (suc n)) = Even n -- 2 + n
 -- !do these on another "live solving session" instead:
 -- show how this generalises _+_ ?
 -- and how (a : A) -> P a generalises _*_ ?
-record _><_ (A : Set) (P : A -> Set) : Set where
-  constructor _,_
-
-  field
-    fst : A
-    snd : P fst
+-- record _><_ (A : Set) (P : A -> Set) : Set where
+--   constructor _,_
+--
+--   field
+--     fst : A
+--     snd : P fst
 
 -- record Customer
 --   field
@@ -98,9 +99,9 @@ record _><_ (A : Set) (P : A -> Set) : Set where
 -- data Sg (A : Set) (P : A -> Set) : Set where
 --   sg : (fst : A) -> P fst -> Sg A P
 
-open _><_ public
-
-infixr 8 _><_
+-- open _><_ public
+--
+-- infixr 8 _><_
 
 _ : Nat >< \n -> Nat >< \m -> n == m
 _ = zero , (zero , refl)
@@ -111,9 +112,9 @@ _ = zero , (zero , refl)
 _ : Nat >< \n -> Even n
 _ = 2 , <>
 
-_*_ : Set -> Set -> Set
-A * B = A >< \ _ -> B
-infixr 9 _*_
+-- _*_ : Set -> Set -> Set
+-- A * B = A >< \ _ -> B
+-- infixr 9 _*_
 
 _ : Nat * Nat
 _ = zero , zero
