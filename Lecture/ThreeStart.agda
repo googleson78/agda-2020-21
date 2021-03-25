@@ -44,6 +44,9 @@ open import Lib.Sigma
 not-eq-suc : {n m : Nat} -> (n == m -> Zero) -> suc n == suc m -> Zero
 not-eq-suc notn==m refl = notn==m refl
 
+_ : 2 == 2
+_ = refl
+
 -- (\ x y z -> x + y + z) 1 2 3 == 6
 dec== : (n m : Nat) -> n == m + (n == m -> Zero)
 dec== zero zero = inl refl
@@ -207,9 +210,8 @@ infix 3 _QED
 
 
 {-
-
 <=-refl : (n : Nat) -> n <= n
-<=-refl = ?
+<=-refl = {!!}
 
 <=-antisym : {n m : Nat} -> n <= m -> m <= n -> n == m
 <=-antisym = {!!}
@@ -247,17 +249,17 @@ length-+L-distrib : {A : Set} -> (xs ys : List A) -> length (xs +L ys) == length
 length-+L-distrib = {!!}
 
 vecToList : {A : Set} {n : Nat} -> Vec A n -> List A
-vecToList = ?
+vecToList = {!!}
 
 vecToList-listToVec-id : {A : Set} -> (xs : List A) -> vecToList (snd (listToVec xs)) == xs
-vecToList-listToVec-id = ?
+vecToList-listToVec-id = {!!}
 
 vTake : {A : Set} {m n : Nat} -> n <= m -> Vec A m -> Vec A n
-vTake = ?
+vTake = {!!}
 
 -- you need to have implemented <=-refl before this
 vTake-id : {A : Set} (n : Nat) (v : Vec A n) -> vTake (<=-refl n) v == v
-vTake-id = ?
+vTake-id = {!!}
 
 -- m - n
 -- d for difference
@@ -269,7 +271,7 @@ reverse : {A : Set} -> List A -> List A
 reverse = {!!}
 
 _ : reverse (1 ,- 2 ,- 3 ,- []) == 3 ,- 2 ,- 1 ,- []
-_ = refl _
+_ = refl
 
 -- might need +L-assoc here
 reverse-+L-distrib : {A : Set} (xs ys : List A) -> reverse (xs +L ys) == reverse ys +L reverse xs
@@ -287,10 +289,10 @@ go : {A : Set} -> List A -> List A -> List A
 go = {!!}
 
 _ : go (1 ,- 2 ,- []) [] == 2 ,- 1 ,- []
-_ = refl _
+_ = refl
 
 _ : go (1 ,- 2 ,- []) (4 ,- 5 ,- []) == 2 ,- 1 ,- 4 ,- 5 ,- []
-_ = refl _
+_ = refl
 
 -- implement an O(n) reverse by using go
 linear-reverse : {A : Set} -> List A -> List A
@@ -359,6 +361,8 @@ downFrom (suc n) = suc n +N downFrom n
 div2 : (n : Nat) -> Even n -> Nat
 div2 = {!!}
 
+-- downFrom n == n * (n + 1) / 2
+-- 2 * (downFrom n) == n * (n + 1)
 downFrom-closed-form : (n : Nat) -> 2 *N downFrom n == n *N suc n
 downFrom-closed-form = {!!}
 
@@ -383,6 +387,9 @@ module listsplit where
 
   infix 10 _<[_]>_
 
+  _ : (3 ,- 5 ,- []) <[ (3 ,- 4 ,- 5 ,- 6 ,- []) ]> (4 ,- 6 ,- [])
+  _ = left (right (left (right []split)))
+
   -- for a predicate to be decidable, it must be decidable for every value
   Dec : {A : Set} -> (A -> Set) -> Set
   Dec {A} P = (x : A) -> (P x -> Zero) + P x
@@ -391,7 +398,7 @@ module listsplit where
   -- one with all the elements for which the predicate holds
   -- and one with all the elements for which it doesn't
   partition :
-    {A : Set} {P : A -> Set} -> (Dec P) -> (xs : List A) ->
+    {A : Set} {P : A -> Set} -> Dec P -> (xs : List A) ->
       List A >< \nays ->
       List A >< \yeas ->
         nays <[ xs ]> yeas *
@@ -401,6 +408,7 @@ module listsplit where
 
 module natsplit where
   -- same idea as with lists
+  -- l <[ m ]> r
   data _<[_]>_ : Nat -> Nat -> Nat -> Set where
     zero : zero <[ zero ]> zero
 
@@ -414,8 +422,14 @@ module natsplit where
 
   infix 10 _<[_]>_
 
+  _ : 3 <[ 5 ]> 2
+  _ = left (left (left (right (right zero))))
+
   -- use the splitting to guide you on how to merge the two vectors
-  _>[_]<_ : {A : Set} {l m r : Nat} -> Vec A l -> l <[ m ]> r -> Vec A r -> Vec A m
+  _>[_]<_ :
+    {A : Set} {l m r : Nat} ->
+    Vec A l -> l <[ m ]> r -> Vec A r ->
+    Vec A m
   xs >[ spl ]< ys = {!!}
 
   split : {A : Set} (l m r : Nat) (spl : l <[ m ]> r) (xs : Vec A m) ->
