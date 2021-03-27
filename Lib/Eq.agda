@@ -21,3 +21,23 @@ ap f refl = refl
 
 ==-trans : {X : Set} {x y z : X} -> x == y -> y == z -> x == z
 ==-trans refl refl = refl
+
+_=[]_ : {A : Set} {y : A} -> (x : A) -> x == y -> x == y
+x =[] refl = refl
+
+infixr 1 _=[]_
+
+_=[_>=_ : {A : Set} {y z : A} -> (x : A) -> x == y -> y == z -> x == z
+x =[ refl >= refl = refl
+
+infixr 1 _=[_>=_
+
+_=<_]=_ : {A : Set} {y z : A} -> (x : A) -> y == x -> y == z -> x == z
+x =< refl ]= refl = refl
+
+infixr 1 _=<_]=_
+
+_QED : {A : Set} -> (x : A) -> x == x
+x QED = refl
+
+infix 3 _QED

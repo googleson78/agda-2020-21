@@ -166,26 +166,6 @@ listToVec (x ,- xs) =
   let n , xs' = listToVec xs
   in suc n , (x ,- xs')
 
-_=[]_ : {A : Set} {y : A} -> (x : A) -> x == y -> x == y
-x =[] refl = refl
-
-infixr 1 _=[]_
-
-_=[_>=_ : {A : Set} {y z : A} -> (x : A) -> x == y -> y == z -> x == z
-x =[ refl >= refl = refl
-
-infixr 1 _=[_>=_
-
-_=<_]=_ : {A : Set} {y z : A} -> (x : A) -> y == z -> x == y -> x == z
-x =< refl ]= refl = refl
-
-infixr 1 _=<_]=_
-
-_QED : {A : Set} -> (x : A) -> x == x
-x QED = refl
-
-infix 3 _QED
-
 -- n == // защото n е пешо и гошо
 -- m == // защото лагранж
 -- z QED
@@ -197,14 +177,14 @@ infix 3 _QED
 +N-commut' : (n m : Nat) -> n +N m == m +N n
 +N-commut' zero m =
   m
-    =[ ==-symm (+N-right-zero m) >=
+    =< +N-right-zero m ]=
   m +N zero
     QED
 +N-commut' (suc n) m =
   suc (n +N m)
     =[ ap suc (+N-commut' n m) >=
   suc (m +N n)
-    =[ ==-symm (+N-right-suc m n) >=
+    =< +N-right-suc m n ]=
   m +N suc n
     QED
 
