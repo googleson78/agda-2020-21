@@ -172,7 +172,7 @@ suc-LeadingOne : (b : Bin) -> LeadingOne b -> LeadingOne (suc b)
 ## 07. `suc-Can`
 Докажете че събирането с едно запазва свойството двоично число да е канонично.
 ```agda
-suc-LeadingOne : (b : Bin) -> Can b -> Can (suc b)
+suc-Can : (b : Bin) -> Can b -> Can (suc b)
 ```
 
 ## 08. `fromNat-Can`
