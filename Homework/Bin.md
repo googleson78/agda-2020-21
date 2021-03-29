@@ -252,7 +252,7 @@ fromNat-+N-+B-commutes : (n m : Nat) -> fromNat (n +N m) == fromNat n +B fromNat
 ```
 
 ## 14. `+B-same-shift`
-Събирането на двоично число, с водеща нула, два пъти със себе си, е същото като да "изместим наляво" (bitwise shift) числото.
+Събирането на двоично число, с водеща единица, два пъти със себе си, е същото като да "изместим наляво" (bitwise shift) числото.
 ```agda
 +B-same-shift : (b : Bin) -> LeadingOne b -> b +B b == b O
 ```
