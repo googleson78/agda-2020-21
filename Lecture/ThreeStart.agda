@@ -2,7 +2,7 @@
 
 module Lecture.ThreeStart where
 
-open import Lib.Nat
+open import Lib.Nat hiding (<=-refl)
 open import Lib.Eq
 open import Lib.List
 open import Lib.One

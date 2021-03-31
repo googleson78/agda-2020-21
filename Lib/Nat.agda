@@ -30,6 +30,10 @@ data _<=_ : Nat -> Nat -> Set where
 
 infix 9 _<=_
 
+<=-refl : (n : Nat) -> n <= n
+<=-refl zero = ozero
+<=-refl (suc x) = osuc (<=-refl x)
+
 <=-trans : {n m k : Nat} -> n <= m -> m <= k -> n <= k
 <=-trans ozero q = ozero
 <=-trans (osuc p) (osuc q) = osuc (<=-trans p q)
