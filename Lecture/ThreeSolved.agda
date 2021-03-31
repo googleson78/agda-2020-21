@@ -1,6 +1,6 @@
 {-# OPTIONS --no-unicode #-}
 
-module Lecture.ThreeStart where
+module Lecture.ThreeSolved where
 
 open import Lib.Nat
 open import Lib.Eq
