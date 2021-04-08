@@ -13,6 +13,19 @@ open import Lib.Sigma
 -- describe modules
 -- show example with open
 
+module Listy (A : Set) where
+  x : Nat
+  x = zero
+
+  id' : A -> A
+  id' y = y
+
+  bla : Nat -> Set
+  bla n = A
+
+-- z : Nat
+-- z = {!id'!}
+
 -- show bst constructions
 -- write Bound
 -- write LeqBound
@@ -26,12 +39,17 @@ LeqNat zero m = One
 LeqNat (suc n) zero = Zero
 LeqNat (suc n) (suc m) = LeqNat n m
 
-<=-LeqNat : {n m : Nat} -> n <= m -> LeqNat n m
-<=-LeqNat ozero = <>
-<=-LeqNat (osuc x) = <=-LeqNat x
+_ : 3 <= 5
+_ = osuc (osuc (osuc ozero))
+
+_ : LeqNat 3 5
+_ = <>
 
 decLeqNat : (n m : Nat) -> LeqNat n m + LeqNat m n
 decLeqNat n m = {!!}
+
+<=-LeqNat : {n m : Nat} -> n <= m -> LeqNat n m
+<=-LeqNat p = {!!}
 
 module
   Sorting
@@ -46,14 +64,19 @@ module
     +inf : Bound
 
   LeqBound : Bound -> Bound -> Set
-  LeqBound -inf _ = One
-  LeqBound _ +inf = One
+  LeqBound -inf y = One
+  LeqBound x +inf = One
   LeqBound (inKey x) (inKey y) = Leq x y
   LeqBound _ _ = Zero
 
   data BST (lo hi : Bound) : Set where
     empty : LeqBound lo hi -> BST lo hi
-    node : (k : Key) -> BST lo (inKey k) -> BST (inKey k) hi -> BST lo hi
+
+    node :
+      (k : Key) ->
+      (left : BST lo (inKey k)) ->
+      (right : BST (inKey k) hi) ->
+      BST lo hi
 
   -- you can use _<=?_ to compare two values
   insert :
@@ -83,13 +106,27 @@ module
   sort : List Key -> OList -inf +inf
   sort xs = flatten (makeTree xs)
 
---    2
---  1   3
--- o o o o
--- o1o2o3o
+--          2
+--       1  .  3
+--     <=.<=.<=.<=
+--       .  .  .
+-- -inf<=1<=2<=3<=+inf
+
+open Sorting Nat LeqNat decLeqNat
+
+one : BST -inf (inKey 2)
+one = node 1 (empty <>) (empty <>)
+
+three : BST (inKey 2) +inf
+three = node 3 (empty <>) (empty <>)
+
+two : BST -inf +inf
+two = node 2 one three
 
 Dec : (A : Set) -> Set
 Dec A = (A -> Zero) + A
+
+{-
 
 -- used a module to introduce global vars
 -- in here, you can compare values for equality with _==?_
@@ -102,7 +139,7 @@ module listy {A : Set} {_==?_ : (x y : A) -> Dec (x == y)} where
 
   data _In_ (x : A) : List A -> Set where
     here : {xs : List A} -> x In (x ,- xs)
-    there : {y : A} {ys : List A} -> x In ys -> x In (y ,- ys)
+    there : {y : A} {xs : List A} -> x In xs -> x In (y ,- xs)
 
   +L-monoL-In : {y : A} {ys : List A} -> (xs : List A) -> y In ys -> y In xs +L ys
   +L-monoL-In = {!!}
@@ -116,7 +153,7 @@ module listy {A : Set} {_==?_ : (x y : A) -> Dec (x == y)} where
   nowhere : {x y : A} {ys : List A} -> (x == y -> Zero) -> (x In ys -> Zero) -> x In y ,- ys -> Zero
   nowhere = {!!}
 
-  -- return the first found x in the list
+  -- if there is one, return the first x in the list
   find : (x : A) (xs : List A) -> Dec (x In xs)
   find = {!!}
 
@@ -131,6 +168,11 @@ module listy {A : Set} {_==?_ : (x y : A) -> Dec (x == y)} where
   remove-keeps = {!!}
 
   -- xs Sub ys - xs is a subsequence of ys
+  -- [] Sub []
+  -- 5 ,- [] Sub 5 ,- []
+  -- 3 ,- 5 ,- [] Sub 3 ,- 5 ,- []
+  -- 3 ,- 5 ,- [] Sub 3 ,- 5 ,- 4 ,- []
+  -- 3 ,- 5 ,- [] Sub 3 ,- 4 ,- 5 ,- []
   data _Sub_ : List A -> List A -> Set where
     s[] : [] Sub []
     s-cons : {x : A} {xs ys : List A} -> xs Sub ys -> (x ,- xs) Sub (x ,- ys)
@@ -168,7 +210,9 @@ module listy {A : Set} {_==?_ : (x y : A) -> Dec (x == y)} where
   ,-Sub-remove : {xs ys : List A} (x : A) -> xs Sub x ,- ys -> remove x xs Sub ys
   ,-Sub-remove = {!!}
 
-  Sub-trans-assoc : {xs ys zs vs : List A} (sub1 : xs Sub ys) (sub2 : ys Sub zs) (sub3 : zs Sub vs) -> Sub-trans (Sub-trans sub1 sub2) sub3 == Sub-trans sub1 (Sub-trans sub2 sub3)
+  Sub-trans-assoc :
+    {xs ys zs vs : List A} (sub1 : xs Sub ys) (sub2 : ys Sub zs) (sub3 : zs Sub vs) ->
+    Sub-trans (Sub-trans sub1 sub2) sub3 == Sub-trans sub1 (Sub-trans sub2 sub3)
   Sub-trans-assoc = {!!}
 
 decNatEq : (n m : Nat) -> Dec (n == m)
@@ -176,5 +220,38 @@ decNatEq = {!!}
 
 open listy {Nat} {decNatEq}
 
-_ : 3 ,- 3 ,- 2 ,- [] Sub 3 ,- 2 ,- []
-_ = {!!}
+_ : 3 In 3 ,- 5 ,- []
+_ = here
+
+_ : 5 In 3 ,- 5 ,- []
+_ = there here
+
+5notIn[] : 5 In [] -> Zero
+5notIn[] ()
+
+5notIn3 : 5 In 3 ,- [] -> Zero
+5notIn3 (there ())
+
+_ : [] Sub []
+_ = s[]
+
+_ : 5 ,- [] Sub 5 ,- []
+_ = s-cons s[]
+
+_ : 3 ,- 5 ,- [] Sub 3 ,- 5 ,- []
+_ = s-cons (s-cons s[])
+
+_ : 3 ,- 5 ,- [] Sub 3 ,- 5 ,- 4 ,- []
+_ = s-cons (s-cons (s-skip s[]))
+
+_ : 3 ,- 5 ,- [] Sub 3 ,- 4 ,- 5 ,- []
+_ = s-cons (s-skip (s-cons s[]))
+
+32notSub23 : 3 ,- 2 ,- [] Sub 2 ,- 3 ,- [] -> Zero
+32notSub23 (s-skip (s-cons ()))
+32notSub23 (s-skip (s-skip ()))
+
+332notSub32 : 3 ,- 3 ,- 2 ,- [] Sub 3 ,- 2 ,- [] -> Zero
+332notSub32 (listy.s-cons (listy.s-skip ()))
+332notSub32 (listy.s-skip (listy.s-skip ()))
+-}
