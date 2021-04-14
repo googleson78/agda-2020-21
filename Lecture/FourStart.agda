@@ -3,6 +3,7 @@
 module Lecture.FourStart where
 
 open import Lib.List
+open import Lib.Vec
 open import Lib.Eq
 open import Lib.Nat
 open import Lib.Sum
@@ -254,4 +255,145 @@ _ = s-cons (s-skip (s-cons s[]))
 332notSub32 : 3 ,- 3 ,- 2 ,- [] Sub 3 ,- 2 ,- [] -> Zero
 332notSub32 (listy.s-cons (listy.s-skip ()))
 332notSub32 (listy.s-skip (listy.s-skip ()))
+
+-- implement less than or equal for nats, but in a different way
+-- look at _Sub_ and think how to "strip away" all the information Lists have compared to Nats
+-- the S is because it's similar to Sub, and because I need another name
+-- (also for "selection" I guess)
+data _<S=_ : Nat -> Nat -> Set where
+  o-zero : {!!} <S= {!!}
+  o-skip : {n m : Nat} -> {!!}
+  o-succ : {n m : Nat} -> {!!}
+
+_ : 1 <S= 1
+_ = {!!}
+
+_ : 1 <S= 3
+_ = {!!}
+
+_ : 3 <S= 5
+_ = {!!}
+
+-- in general there's more than one way in which n <S= m!
+-- find out all the ways
+
+_ :
+  (1 <S= 2) >< \p -> -- there's a proof p for 1 <S= 2
+  (1 <S= 2) >< \q -> -- and a proof q for 1 <S= 2
+  p == q -> Zero     -- and they're different
+_ = {!!}
+
+-- it might be interesting to try to figure out how many proofs there are for n <S= m, for fixed n and m
+-- you can use -l in a hole for such a proof (e.g. 1 <S= 4), together with agdas auto, to get it to list all of them
+
+
+-- we can have an "empty" sub - it selects nothing
+-- this makes more sense once you reach select - so if you want to you can read the comment on select first
+-- alternatively you can think of it as "just a proof"
+0<S= : (n : Nat) -> 0 <S= n
+0<S= = {!!}
+
+-- similarly, we can have an "all" sub - it selects everything
+-- or alternatively, a reflexivity proof
+refl-<S= : (n : Nat) -> n <S= n
+refl-<S= = {!!}
+
+-- there is only one empty sub (and only one proof) - and that's the one you wrote
+0<S=-unique : {n : Nat} (p : 0 <S= n) -> 0<S= n == p
+0<S=-unique = {!!}
+
+-- we can construct a sub from our usual leq
+<=-<S= : {n m : Nat} -> n <= m -> n <S= m
+<=-<S= = {!!}
+
+-- and vice versa
+-- you might need <=-trans here and an additonal lemma for one of the cases
+<S=-<= : {n m : Nat} -> n <S= m -> n <= m
+<S=-<= = {!!}
+
+
+-- we can use <S= to encode a "choice of elements" from a vector
+-- this is similar in purpose to _Sub_
+-- but uses less information than _Sub_, which potentially carries around lists as its arguments (look in the constructors) as we only store Nats
+--
+-- use the <S= proof to guide you on when to keep an element and when to drop one
+select : {A : Set} {m n : Nat} -> n <S= m -> Vec A m -> Vec A n
+select = {!!}
+
+
+-- we can compose selections
+-- alternatively, this is transitivity for <S=
+-- make this as lazy as possible in its pattern matches (so as few matches as possible)
+-- so that your later proofs are also easier!
+-- hint: match on the right one first
+_S<<_ : {n m k : Nat} -> n <S= m -> m <S= k -> n <S= k
+p S<< q = {!!}
+
+-- selecting a composition is the same as composing selects
+-- it doesn't matter if we select a composition or select twice
+-- (or in other words, it doesn't matter whether compose first or select first)
+select-S<< :
+  {A : Set} {n m k : Nat}
+  (p : n <S= m) (q : m <S= k) (xs : Vec A k) ->
+  select (p S<< q) xs == select p (select q xs)
+select-S<< = {!!}
+
+-- it doesn't matter if we compose with the id selection on the left
+S<<-left-id : {n m : Nat} (p : n <S= m) -> (refl-<S= n S<< p) == p
+S<<-left-id = {!!}
+
+-- or on the right
+S<<-right-id : {n m : Nat} (p : n <S= m) -> (p S<< (refl-<S= m)) == p
+S<<-right-id = {!!}
+
+
+-- and it's also associative
+S<<-assoc :
+  {n m k v : Nat} (p : n <S= m) (q : m <S= k) (t : k <S= v) ->
+  (p S<< q) S<< t == p S<< (q S<< t)
+S<<-assoc = {!!}
+
+-- we can use selections of a particular form to index into a vector
+-- a selection with 1 on the left effectively means that there is only one place in its construction that can have a o-succ constructor
+-- that's *exactly* the index of the item we want to get from the vector
+-- (use select and vHead)
+vProject : {A : Set} {n : Nat} -> Vec A n -> 1 <S= n -> A
+vProject = {!!}
+
+-- note the locations of the "up arrows"
+
+_ : vProject (0 ,- 1 ,- 2 ,- []) (o-succ (o-skip (o-skip o-zero))) == 0
+--            ^                   ^
+_ = refl
+
+_ : vProject (0 ,- 1 ,- 2 ,- []) (o-skip (o-succ (o-skip o-zero))) == 1
+--                 ^                      ^
+_ = refl
+
+_ : vProject (0 ,- 1 ,- 2 ,- []) (o-skip (o-skip (o-succ o-zero))) == 2
+--                      ^                         ^
+_ = refl
+
+-- but we can also do the opposite!
+-- if we can get a value for every 1 <S= n, then we effectively know all the elements of a vector
+vTabulate : {A : Set} (n : Nat) -> (1 <S= n -> A) -> Vec A n
+vTabulate = {!!}
+
+-- tabulating projections should result in the original vector
+-- "evaluate more pls agda" might be useful here
+-- reminder:
+-- spacemacs - <SPC> u <SPC> u <normal-bind>
+-- vscode - (should be) C-u C-u <normal-bind>
+vTabulate-vProject : {A : Set} {n : Nat} -> (xs : Vec A n) -> vTabulate n (vProject xs) == xs
+vTabulate-vProject = {!!}
+
+-- projecting a tabulation should result in the original tabulation
+-- again, "evaluate more pls" might be useful
+-- uniqueness for 0<S= might also be useful
+vProject-vTabulate :
+  {A : Set} {n : Nat}
+  (f : 1 <S= n -> A) (i : 1 <S= n) ->
+  vProject (vTabulate n f) i == f i
+vProject-vTabulate = {!!}
+
 -}
