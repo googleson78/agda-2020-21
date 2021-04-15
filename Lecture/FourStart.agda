@@ -47,7 +47,10 @@ _ : LeqNat 3 5
 _ = <>
 
 decLeqNat : (n m : Nat) -> LeqNat n m + LeqNat m n
-decLeqNat n m = {!!}
+decLeqNat zero zero = inl <>
+decLeqNat zero (suc m) = inl <>
+decLeqNat (suc n) zero = inr <>
+decLeqNat (suc n) (suc m) = decLeqNat n m
 
 <=-LeqNat : {n m : Nat} -> n <= m -> LeqNat n m
 <=-LeqNat p = {!!}
@@ -126,6 +129,87 @@ two = node 2 one three
 
 Dec : (A : Set) -> Set
 Dec A = (A -> Zero) + A
+
+-- TODO:
+-- grey highlight
+
+-- plusnat : Nat -> Nat -> Nat
+-- plusnat zero m = m
+-- plusnat n zero = n
+-- plusnat (suc n) m = suc (plusnat n m)
+--
+-- f : (m : Nat) -> plusnat zero m == m
+-- f m = refl
+--
+-- g : (m : Nat) -> plusnat m zero == m
+-- g zero = {!!}
+-- g (suc m) = {!!}
+
+-- case n of
+--   zero -> m
+--   suc n ->
+--     case m of
+--       zero -> n
+--       ...
+
+-- plusnat n m == plusnat m n // n -> zero
+-- plusnat zero m -> m
+-- Goal: m == plusnat m zero
+-- m == m
+-- plusnat-commut : (n m : Nat) -> plusnat n m == plusnat m n
+-- plusnat-commut zero m = {!!}
+-- plusnat-commut (suc n) m = {!!}
+
+-- "pipe"s in goal
+-- with generalises (show vs lambda)
+-- show generalised:
+-- goal type
+
+-- original args
+-- other later withs
+--
+-- dots ??
+
+-- asd : Nat -> Nat
+-- asd n with decLeqNat n 5
+-- ... | inl x = 5
+-- ... | inr x = n
+--
+-- pasd : (n : Nat) -> LeqNat 5 n -> asd n == n
+-- pasd n x with decLeqNat n 5
+-- ... | inl x1 = {!!}
+-- ... | inr x1 = {!!}
+
+
+-- bla : (n : Nat) -> n == 10 -> 0 == n
+-- bla n x with n
+-- ... | z = {!z!}
+--
+-- bla2 : (n : Nat) -> 0 == n
+-- bla2 n with n
+-- bla2 n | zero with 5
+-- bla2 n | zero | q = {!!}
+-- bla2 n | suc z = {!!}
+
+-- pasd : (n : Nat) -> 6 <= n -> asd n == n
+-- pasd = {!!}
+
+-- +N-right-zero' : (n : Nat) -> n +N 0 == n
+-- +N-right-zero' zero = refl
+-- -- +N-right-zero' (suc n) rewrite +N-right-zero' n = refl
+-- +N-right-zero' (suc n) with n +N 0 with +N-right-zero' n
+-- ... | .n | refl = refl
+
+-- Goal: suc (n +N 0) == suc n
+-- ————————————————————————————————————————————————————————————
+-- z : n +N 0 == n
+-- n : Nat
+-- after
+-- Goal: suc u == suc n
+-- ————————————————————————————————————————————————————————————
+-- z : u == n
+-- u : Nat
+-- n : Nat
 
 {-
 
@@ -217,7 +301,8 @@ module listy {A : Set} {_==?_ : (x y : A) -> Dec (x == y)} where
   Sub-trans-assoc = {!!}
 
 decNatEq : (n m : Nat) -> Dec (n == m)
-decNatEq = {!!}
+decNatEq = ?
+
 
 open listy {Nat} {decNatEq}
 
