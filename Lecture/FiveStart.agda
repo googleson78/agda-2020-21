@@ -7,13 +7,50 @@ open import Lib.Sum
 open import Lib.Zero
 open import Lib.One
 open import Lib.List
+open import Lib.Sigma
 
 -- mention =[] being useful for writing down examples later!
 
 -- Fin n has n inhabitants
+-- (x : Fin n) -> x < n
+-- x ∈ [0..n)
 data Fin : Nat -> Set where
   zero : {n : Nat} -> Fin (suc n)
   suc : {n : Nat} -> Fin n -> Fin (suc n)
+
+-- [0..1) -> [0, 1) -> {0}
+_ : Fin 1
+_ = zero
+
+-- [0..2) -> [0,1,2) -> {0, 1}
+_ : Fin 2
+_ = zero
+
+_ : Fin 5
+_ = suc (suc (suc (suc zero)))
+
+-- Leq : Nat -> Nat -> Set
+-- Leq zero m = One
+-- Leq (suc n) zero = Zero
+-- Leq (suc n) (suc m) = Leq n m
+--
+-- Leq 3 5
+-- Leq 2 4
+-- Leq 1 3
+-- Leq 0 2
+-- One
+-- _ : Nat >< \m -> Leq m 5
+-- _ = 3 , _
+--
+-- f : (n : Nat) -> {Leq n 5} -> Nat >< \m -> Leq m 5
+-- f n {x} = n , x
+--
+-- _ : f 3 == f 3
+-- _ = refl
+
+-- [0..) -> [0) -> {}
+-- _ : Fin 0
+-- _ = {!zero!}
 
 {-
 toNat : {n : Nat} -> Fin n -> Nat
