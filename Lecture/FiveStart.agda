@@ -148,7 +148,7 @@ decEqFin = {!!}
 
 -- name the constructors var, app, lam
 -- for everything below to work ^^
-data Lam : Nat -> Set where
+data Lam (n : Nat) : Set where
 
 -- construct a variable from a Nat directly
 -- you'll need to expose the Lt arg
