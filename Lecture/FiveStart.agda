@@ -85,8 +85,9 @@ fromNat = {!!}
 -- which includes not having to write down the explicit proof for < (which fromNat) requires
 -- instead, if we provide a calculated version, when we give come constant (like 1)
 -- agda will be able to automatically figure out the required proof, by using this definition
-Lt : Nat -> Nat -> Set
-Lt = {!!}
+-- NB: this is now in Lib.Nat
+-- Lt : Nat -> Nat -> Set
+-- Lt = {!!}
 
 -- prove that the calculated version implies the regular one,
 -- so that we may provide the regular proof to fromNat later

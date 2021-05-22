@@ -96,3 +96,37 @@ _ = lam (var Z)
 -- Lam ([] -, alpha) (beta => alpha)
 _ : Lam [] (alpha => beta => alpha)
 _ = lam (lam (var (S Z)))
+
+
+-- TODO: explain at lecture
+-- mechanism so we can use the usual debruijn indices instead of Ins
+length : Context -> Nat
+length [] = 0
+length (ts -, _) = suc (length ts)
+
+ix : (n : Nat) (ctxt : Context) -> (Lt n (length ctxt)) -> Type
+ix zero (ts -, x) p = x
+ix (suc n) (ts -, x) p = ix n ts p
+
+ixIn : (n : Nat) (ctxt : Context) (p : Lt n (length ctxt)) -> ix n ctxt p In ctxt
+ixIn zero (ctxt -, x) p = Z
+ixIn (suc n) (ctxt -, x) p = S (ixIn n ctxt p)
+
+`_ : {ctxt : Context} (n : Nat) -> {p : Lt n (length ctxt)} -> Lam ctxt (ix n ctxt p)
+` n = var (ixIn n _ _)
+
+-- same examples as above, but with `_
+_ : Lam ([] -, alpha) alpha
+_ = ` 0
+
+_ : Lam ([] -, beta -, alpha) beta
+_ = ` 1
+
+-- identity : alpha => alpha
+_ : Lam [] (alpha => alpha)
+_ = lam (` 0)
+
+-- k : alpha => beta => alpha = (lam_x (lam_y x))
+-- Lam ([] -, alpha) (beta => alpha)
+_ : Lam [] (alpha => beta => alpha)
+_ = lam (lam (` 1))
