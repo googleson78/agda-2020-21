@@ -8,8 +8,8 @@ open import Lib.Zero
 open import Lib.One
 
 data Type : Set where
-    base : Nat -> Type
-    _=>_ : Type -> Type -> Type
+  base : Nat -> Type
+  _=>_ : Type -> Type -> Type
 
 infixr 11 _=>_
 
@@ -68,8 +68,8 @@ data _In_ (x : A) : List A -> Set where
 -}
 
 data _In_ : Type -> Context -> Set where
-    Z : {tau : Type} {gamma : Context} -> tau In (gamma -, tau)
-    S : {sigma tau : Type} {gamma : Context} -> tau In gamma -> tau In (gamma -, sigma)
+  Z : {tau : Type} {gamma : Context} -> tau In (gamma -, tau)
+  S : {sigma tau : Type} {gamma : Context} -> tau In gamma -> tau In (gamma -, sigma)
 
 _ : beta In delta
 _ = Z
