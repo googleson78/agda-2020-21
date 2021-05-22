@@ -1,6 +1,8 @@
 module Lib.Nat where
 
 open import Lib.Eq
+open import Lib.Zero
+open import Lib.One
 
 data Nat : Set where
   zero : Nat -- zero
@@ -57,3 +59,8 @@ infix 9 _<=_
 
 <=-monoL-+N : (n m : Nat) -> n <= m +N n
 <=-monoL-+N n m rewrite +N-commut m n = <=-monoR-+N n m
+
+Lt : Nat -> Nat -> Set
+Lt n zero = Zero
+Lt zero (suc m) = One
+Lt (suc n) (suc m) = Lt n m
