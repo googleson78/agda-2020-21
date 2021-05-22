@@ -76,11 +76,11 @@ _ = Z
 
 _ : alpha In delta
 _ = S Z
-    
+
 data Lam (gamma : Context) : Type -> Set where
   var : {tau : Type} -> tau In gamma -> Lam gamma tau
   app : {sigma1 sigma2 : Type} -> Lam gamma (sigma1 => sigma2) -> Lam gamma sigma1 -> Lam gamma sigma2
-  lam : {sigma1 sigma2 : Type} -> Lam (gamma -, sigma1) sigma2 -> Lam gamma (sigma1 => sigma2) 
+  lam : {sigma1 sigma2 : Type} -> Lam (gamma -, sigma1) sigma2 -> Lam gamma (sigma1 => sigma2)
 
 _ : Lam ([] -, alpha) alpha
 _ = var Z
