@@ -42,7 +42,8 @@ open Category public
 --   \   |
 --    \  |
 --     \ |
---      \v
+--      \|
+--       v
 --       *
 module Three where
   data Three : Set where
