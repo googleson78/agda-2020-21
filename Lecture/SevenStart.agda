@@ -13,14 +13,48 @@ open import Lib.Two
 open import Lib.Zero
 open import Lib.Sigma
 
+{-
+-- Type : Type
+-- Set 0 : Set 1
+-- Set 1 : Set 2
+-- Set 2 : Set 3
+-- Set 0 : Set 0
+record A : Set where
+  field
+   B : Set
+
+x : Zero
+x = neshtosi
+
+zero-elim : {A : Set} -> Zero -> A
+-}
+
+{-
+-- TODO: ext
+
+-- ∀f. ∀g. ∀x. f(x) == g(x) => f == g
+-- f = linear search
+-- g = binary search
+-- are they the same?
+
+postulate
+  extensionality :
+    {A B : Set} {f g : A -> B} ->
+    ((x : A) -> f x == g x) ->
+    f == g
+-}
+
+
 record Category : Set where
   field
     -- data
     Obj : Set
-    _~>_ : Obj -> Obj -> Set
+    _~>_ : (S : Obj) -> (T : Obj) -> Set
 
     -- operations
     id~> : (x : Obj) -> x ~> x
+    -- (f ∘ g  ∘ h) x == f(g(h(x)))
+    -- (h >~> g >~> f) x == f(g(h(x)))
     _>~>_ : {S T R : Obj} -> S ~> T -> T ~> R -> S ~> R
 
     -- laws
@@ -36,7 +70,22 @@ record Category : Set where
       (f >~> g) >~> h == f >~> (g >~> h)
 
 open Category public
-{-
+
+-- TODO: use a record here!
+-- <SPC> m r
+-- C-c C-r
+AGDA : Category
+AGDA =
+  record
+    { Obj = Set
+    ; _~>_ = \ S T -> S -> T
+    ; id~> = \ S x -> x
+    ; _>~>_ = \ f g x -> g (f x)
+    ; left-id = \ f -> refl
+    ; right-id = \ f -> refl
+    ; assoc = \ f g h -> refl
+    }
+
 -- * --> *
 --  \    |
 --   \   |
@@ -46,16 +95,68 @@ open Category public
 --       v
 --       *
 module Three where
+  -- One + One + One
   data Three : Set where
+    -- zero : Three
+    -- one : Three
+    -- two : Three
+    zero one two : Three
 
   data Arrow : Three -> Three -> Set where
+    idArr : (x : Three) -> Arrow x x
+    zero-one : Arrow zero one
+    one-two : Arrow one two
+    zero-two : Arrow zero two
 
+
+  -- _+N_
+  -- zero +N m = m
+  -- (suc n) +N m = suc (n +N m)
+
+  -- <SPC> m c
+  -- THREE' : Category
+  -- THREE' = record
+  --            { Obj = Three
+  --            ; _~>_ = Arrow
+  --            ; id~> = \ x -> idArr x
+  --            ; _>~>_ = {!!}
+  --            ; left-id = {!!}
+  --            ; right-id = {!!}
+  --            ; assoc = {!!}
+  --            }
   THREE : Category
-  THREE = {!!}
-
--- TODO: use a record here!
-SET : Category
-SET = {!!}
+  Obj THREE = Three
+  _~>_ THREE = Arrow
+  id~> THREE = idArr
+  (THREE >~> idArr _) (idArr x) = idArr x
+  (THREE >~> idArr .zero) zero-one = zero-one
+  (THREE >~> idArr .one) one-two = one-two
+  (THREE >~> idArr .zero) zero-two = zero-two
+  (THREE >~> zero-one) (idArr .one) = zero-one
+  (THREE >~> zero-one) one-two = zero-two
+  (THREE >~> one-two) (idArr .two) = one-two
+  (THREE >~> zero-two) (idArr .two) = zero-two
+  left-id THREE (idArr _) = refl
+  left-id THREE zero-one = refl
+  left-id THREE one-two = refl
+  left-id THREE zero-two = refl
+  right-id THREE (idArr _) = refl
+  right-id THREE zero-one = refl
+  right-id THREE one-two = refl
+  right-id THREE zero-two = refl
+  assoc THREE (idArr _) (idArr _) (idArr _) = refl
+  assoc THREE (idArr .zero) (idArr .zero) zero-one = refl
+  assoc THREE (idArr .one) (idArr .one) one-two = refl
+  assoc THREE (idArr .zero) (idArr .zero) zero-two = refl
+  assoc THREE (idArr .zero) zero-one (idArr .one) = refl
+  assoc THREE (idArr .zero) zero-one one-two = refl
+  assoc THREE (idArr .one) one-two (idArr .two) = refl
+  assoc THREE (idArr .zero) zero-two (idArr .two) = refl
+  assoc THREE zero-one (idArr .one) (idArr .one) = refl
+  assoc THREE zero-one (idArr .one) one-two = refl
+  assoc THREE zero-one one-two (idArr .two) = refl
+  assoc THREE one-two (idArr .two) (idArr .two) = refl
+  assoc THREE zero-two (idArr .two) (idArr .two) = refl
 
 -- all of the info is in the objects
 record Preorder : Set where
@@ -63,13 +164,30 @@ record Preorder : Set where
     cat : Category
     one-arrow : {S T : Obj cat} (f g : _~>_ cat S T) -> f == g
 
+<=-unique : {n m : Nat} (p q : n <= m) -> p == q
+<=-unique ozero ozero = refl
+<=-unique (osuc p) (osuc q) = ap osuc (<=-unique p q)
+
 -- TODO: show copatterns here
 -- https://agda.readthedocs.io/en/v2.6.1.3/language/copatterns.html
+-- n <= m
+-- m <= k
+-- n <= k
 <=-Cat : Category
-<=-Cat = {!!}
+Obj <=-Cat = Nat
+_~>_ <=-Cat = _<=_
+id~> <=-Cat = <=-refl
+_>~>_ <=-Cat = <=-trans
+left-id <=-Cat {n} {m} p = <=-unique (<=-trans (<=-refl n) p) p
+right-id <=-Cat {S} {T} f = <=-unique (<=-trans f (<=-refl T)) f
+assoc <=-Cat f g h =
+  <=-unique
+    (<=-trans (<=-trans f g) h)
+    (<=-trans f (<=-trans g h))
 
 <=-Preorder : Preorder
-<=-Preorder = {!!}
+Preorder.cat <=-Preorder = <=-Cat
+Preorder.one-arrow <=-Preorder = <=-unique
 
 -- all of the info is in the arrows
 record Monoid : Set where
@@ -77,12 +195,21 @@ record Monoid : Set where
     cat : Category
     Obj-is-One : Obj cat == One
 
+-- *
 Nat+N-Cat : Category
-Nat+N-Cat = {!!}
+Obj Nat+N-Cat = One
+_~>_ Nat+N-Cat _ _ = Nat
+id~> Nat+N-Cat _ = zero
+_>~>_ Nat+N-Cat = _+N_
+left-id Nat+N-Cat n = refl -- zero +N n == n
+right-id Nat+N-Cat = +N-right-zero  -- n +N zero == n
+assoc Nat+N-Cat = +N-assoc
 
 Nat+N-Monoid : Monoid
-Nat+N-Monoid = {!!}
+Monoid.cat Nat+N-Monoid = Nat+N-Cat
+Monoid.Obj-is-One Nat+N-Monoid = refl
 
+{-
 -- a category with one object
 -- *
 ONE : Category
