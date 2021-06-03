@@ -223,4 +223,28 @@ vTake = {!!}
 -- we need to use the opposite category of <=-Cat here, to make the "directions" match up
 VTAKE : Set -> Op <=-Cat => SET
 VTAKE = {!!}
+
+-- form a set of "free arrows" based on a relation
+-- this is exactly the same as a reflexive and transitive closure of a relation
+data Free {X : Set}(R : X -> X -> Set) (x : X) : X -> Set where
+  idArr : Free R x x
+  trans : {y z : X} -> R x y -> Free R y z -> Free R x z
+
+composeFree : {X : Set} {R : X -> X -> Set} {x y z : X} -> Free R x y -> Free R y z -> Free R x z
+composeFree = {!!}
+
+FREE : (X : Set) -> (X -> X -> Set) -> Category
+FREE = {!!}
+
+data Fin : Nat -> Set where
+  zero : {n : Nat} -> Fin (suc n)
+  suc : {n : Nat} -> Fin n -> Fin (suc n)
+
+-- we want there to be an arrow from (x : Fin n) to suc x, except for the "last number" in Fin n
+Next : {n : Nat} -> Fin n -> Fin n -> Set
+Next = {!!}
+
+-- now we can form all the finite categories by choosing how many objects we want via n
+Finite : Nat -> Category
+Finite = ?
 -}
