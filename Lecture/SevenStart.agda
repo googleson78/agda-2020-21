@@ -285,7 +285,7 @@ _>~>_ (Product X Y) = {!!}
 left-id (Product X Y) = {!!}
 right-id (Product X Y) = {!!}
 assoc (Product X Y) = {!!}
-
+-}
 -- like homomorphisms
 record _=>_ (C D : Category) : Set where
   field
@@ -300,11 +300,47 @@ record _=>_ (C D : Category) : Set where
 
 open _=>_ public
 
+data Maybe (A : Set) : Set where
+  just : A -> Maybe A
+  nothing : Maybe A
+
 postulate
   ext :
     {A B : Set} {f g : A -> B} ->
-    ((x : A) -> f x == g x) -> f == g
+    ((x : A) -> f x == g x) ->
+    f == g
 
+-- parseInt :: String -> Maybe Int
+
+-- F-Obj Maybe : Set -> Set
+-- * == Set
+-- id~> == id
+-- (F-map MAYBE F \x -> x) == (\ x -> x)
+-- Homotopy type theory
+MAYBE : AGDA => AGDA
+F-Obj MAYBE = Maybe
+F-map MAYBE f (just x) = just (f x)
+F-map MAYBE f nothing = nothing
+F-map-id MAYBE =
+  ext
+    \{ (just x) -> refl ;
+       nothing -> refl -- nothing == nothing
+     }
+F-map->~> MAYBE f g =
+  ext
+    \{ (just x) -> refl ;
+         -- F-map MAYBE (f >> g) (just x) == (F-map MAYBE f >> F-map MAYBE g) (just x)
+         -- F-map MAYBE (f >> g) (just x) == (\x1 -> F-map MAYBE g (F-map MAYBE f x1)) (just x)
+         -- F-map MAYBE (f >> g) (just x) == F-map MAYBE g (F-map MAYBE f (just x))
+         -- F-map MAYBE (f >> g) (just x) == F-map MAYBE g (just (f x))
+         -- F-map MAYBE (f >> g) (just x) == just (g (f x))
+         -- F-map MAYBE (\x1 -> g (f x1)) (just x) == just (g (f x))
+         -- just ((\x1 -> g (f x1)) x) == just (g (f x))
+         -- just (g (f x)) == just (g (f x))
+       nothing -> refl
+     }
+
+{-
 id : {A : Set} -> A -> A
 id x = x
 
