@@ -23,7 +23,7 @@ merge :
   Heap lr -> Heap rr -> Heap {!!}
 merge = {!!}
 
-singleton : {r : Rank} -> Priority -> Heap {!!}
+singleton : Priority -> Heap {!!}
 singleton = {!!}
 
 insert : {r : Rank} -> Priority -> Heap r -> Heap {!!}
